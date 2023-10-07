@@ -199,18 +199,15 @@ const server = http.createServer((req, res) => {
         // Use Promise.all to make concurrent requests to Unsplash, Pixabay, and StoryBlocks
         Promise.all([
             fetchUnsplashData(query).catch((error) => {
-                // Handle the error, but do not include it in the results
-                console.error(error);
+                console.error("Error - Unsplash:" + error);
                 return null;
             }),
             fetchPixabayData(query).catch((error) => {
-                // Handle the error, but do not include it in the results
-                console.error(error);
+                console.error("Error - Pixabay" + error);
                 return null;
             }),
             fetchStoryBlocksData(query).catch((error) => {
-                // Handle the error, but do not include it in the results
-                console.error(error);
+                console.error("Error - StoryBlocks" + error);
                 return null;
             }),
         ])
