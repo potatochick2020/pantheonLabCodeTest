@@ -158,7 +158,6 @@ function fetchStoryBlocksData(query) {
             storyBlocksResponse.on('end', () => {
                 try {
                     const result = JSON.parse(data);
-                    console.log("storyblocks", result);
                     if (result.results.length > 0) {
                         const responseObject = {
                             image_ID: result.results[0].id, // Use the first result
@@ -213,7 +212,6 @@ const server = http.createServer((req, res) => {
         ])
             .then((results) => {
                 // Filter out null results (Unsplash, Pixabay, and StoryBlocks errors)
-                console.log(results)
                 const filteredResults = results.filter((result) => result !== null);
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
