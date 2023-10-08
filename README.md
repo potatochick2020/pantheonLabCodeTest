@@ -24,7 +24,7 @@ PIXABAY_API_KEY = 'ABC1234567890DEF'
 STORYBLOCKS_PUBLIC_KEY = 'ABC1234567890DEF'
 STORYBLOCKS_PRIVATE_KEY = 'ABC1234567890DEF'
 ```
-Run following command in `{repository-path}/question`
+Run following command in `{repository-path}/question2`
 ```
 npm install
 node app.js
