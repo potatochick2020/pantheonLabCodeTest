@@ -1,6 +1,7 @@
 const http = require('http');
 const https = require('https');
 const url = require('url');
+const { graphql, buildSchema } = require('graphql');
 const dotenv = require('dotenv'); // Add this line for .env file support
 const crypto = require('crypto');
 
@@ -11,6 +12,53 @@ const UNSPLASH_API_KEY = process.env.UNSPLASH_API_KEY;
 const PIXABAY_API_KEY = process.env.PIXABAY_API_KEY;
 const STORYBLOCKS_PUBLIC_KEY = process.env.STORYBLOCKS_PUBLIC_KEY;
 const STORYBLOCKS_PRIVATE_KEY = process.env.STORYBLOCKS_PRIVATE_KEY;
+
+const schema = buildSchema(`
+  type Image {
+    image_ID: String
+    thumbnails: String
+    preview: String
+    title: String
+    source: String
+    tags: [String]
+  }
+
+  type Query {
+    searchPhoto(query: String!): [Image]
+  }
+`);
+
+const rootValue = {
+    searchPhoto: async ({ query }) => {
+        console.log("QUERY",query)
+        try {
+            const [unsplashData, pixabayData, storyBlocksData] = await Promise.all([
+                fetchUnsplashData(query),
+                fetchPixabayData(query),
+                fetchStoryBlocksData(query),
+            ]);
+
+            // Assuming each of the fetch functions returns data in the expected format
+            const images = [unsplashData, pixabayData, storyBlocksData].filter(
+                (result) => result !== null
+            );
+
+            return images.map((image) => ({
+                image_ID: image.image_ID,
+                thumbnails: image.thumbnails,
+                preview: image.preview,
+                title: image.title,
+                source: image.source,
+                tags: image.tags,
+            }));
+        } catch (error) {
+            throw new Error('Error fetching data');
+        }
+    },
+};
+
+
+
 
 // Function to fetch data from Unsplash
 function fetchUnsplashData(query) {
@@ -191,10 +239,9 @@ function fetchStoryBlocksData(query) {
 
 const server = http.createServer((req, res) => {
     const parsedUrl = url.parse(req.url, true);
-
-    if (parsedUrl.pathname === '/api/search/photo' && parsedUrl.query.query) {
-        const query = parsedUrl.query.query;
-
+    const query = parsedUrl.query.query;
+    console.log(query)
+    if (parsedUrl.pathname === '/api/search/photo' && query) {
         // Use Promise.all to make concurrent requests to Unsplash, Pixabay, and StoryBlocks
         Promise.all([
             fetchUnsplashData(query).catch((error) => {
@@ -221,6 +268,33 @@ const server = http.createServer((req, res) => {
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
                 res.end(error);
             });
+    } else if (req.method === 'POST' && parsedUrl.pathname === '/graphql/api/search/photo') {
+        let requestBody = '';
+        
+        req.on('data', (chunk) => {
+            requestBody += chunk;
+        });
+
+        req.on('end', () => {
+            try {
+                const requestBodyObj = JSON.parse(requestBody);
+                const graphqlQuery = requestBodyObj.query;
+
+                graphql({ schema, source: graphqlQuery, rootValue})
+                    .then((response) => {
+                        res.writeHead(200, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify(response));
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        res.writeHead(500, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'Internal Server Error' }));
+                    });
+            } catch (error) {
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Bad Request');
+            }
+        });
     } else {
         res.writeHead(400, { 'Content-Type': 'text/plain' });
         res.end('Bad Request');

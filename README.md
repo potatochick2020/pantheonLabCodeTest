@@ -10,7 +10,20 @@ Requirement:
 - [x] Error Handling , return result from successful source API call even some call from other source fail
 
 Optional:
-- [ ] Use GraphQL instead of restful 
+- [x] Use GraphQL instead of restful API 
+
+For your convenience, I have keep both API in the server
+
+RESTFUL API : (GET) localhost:3000/api/search/photo?query=cat
+
+GraphQL API : (POST) localhost:3000/graphql/api/search/photo
+
+Please include the following JSON in HTTP body
+```JSON
+{
+  "query": "query SearchPhoto { searchPhoto(query: \"cat\") { image_ID thumbnails preview title source tags} }"
+}
+```
 - [ ] Authentication (AWS cognito, as I want to have a try of AWS cognito authentication service, I will finish the GraphQL task first then do Authentication with AWS)
 - [ ] host on AWS 
 - [ ] 1000 req/s 
@@ -76,3 +89,12 @@ I believe there is some changes of the api, current version does not have tags i
 
 [StoryBlock API reference](https://documentation.storyblocks.com/#ae3e53a1-a9f5-45ef-afc7-9a0f9b33f228)
 
+## Graph QL 
+Nothing really special, just implement the library (First time GraphQL user)
+### Ask for what you need, get exactly that
+
+With all parameters
+![Alt text](Q2_GraphQL_1.png)
+
+Without preview and thumbnail URL
+![Alt text](Q2_GraphQL_2.png)
