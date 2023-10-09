@@ -177,6 +177,6 @@ From chat gpt:
 
 - [x] play, pause button
 - [x] some text effect
-- [ ] React hook
+- [x] React hook
 
 https://codesandbox.io/s/great-river-cp5wry?file=/src/index.js 
