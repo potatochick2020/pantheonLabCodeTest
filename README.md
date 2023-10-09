@@ -178,5 +178,8 @@ From chat gpt:
 - [x] play, pause button
 - [x] some text effect
 - [x] React hook
+- [ ] Background Music
+- [ ] Play the video from 5th second when the second scene starts 
+- [ ] Scene transitions 
 
 https://codesandbox.io/s/great-river-cp5wry?file=/src/index.js 
