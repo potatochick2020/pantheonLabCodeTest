@@ -152,7 +152,7 @@ As we do not want the value never update, e.g. beach will be hot keyword in summ
 
 If the lambda service cannot be automatically scale, and we do not want it to be vertically scale/ we had already reach the limit of vertically scale (in normal case for a simple service like this should be able to afford 1000 req/s ) but let's say if it cant.
 
-![Alt text](AWS_2.jpg)
+![Alt text](Q2_AWS2.jpg)
 
 I propose to add a load balancer to distribute the workload to different service, which we could simply use the round robin strategy
 
